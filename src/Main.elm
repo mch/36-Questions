@@ -28,6 +28,7 @@ type Question
     = None
     | Closeness Int
     | Smalltalk Int
+    | About
 
 
 type alias Model =
@@ -49,6 +50,8 @@ init _ =
 type Msg
     = SelectedCloseness
     | SelectedSmallTalk
+    | SelectedAbout
+    | SelectedNone
     | NextQuestion
     | SelectedQuestion String
     | NoOp
@@ -62,6 +65,12 @@ update msg model =
 
         SelectedSmallTalk ->
             ( { model | question = Smalltalk 0 }, Cmd.none )
+
+        SelectedAbout ->
+            ( { model | question = About }, Cmd.none )
+
+        SelectedNone ->
+            ( { model | question = None }, Cmd.none )
 
         NextQuestion ->
             ( { model | question = nextQuestion model.question }, Cmd.none )
@@ -92,6 +101,9 @@ nextQuestion question =
             else
                 Smalltalk 0
 
+        About ->
+            None
+
 
 selectQuestion currentQuestion q =
     case currentQuestion of
@@ -103,6 +115,9 @@ selectQuestion currentQuestion q =
 
         Smalltalk _ ->
             Smalltalk (String.toInt q |> Maybe.withDefault 0)
+
+        About ->
+            None
 
 
 
@@ -130,6 +145,9 @@ view model =
         Smalltalk q ->
             viewQuestion q smalltalkQuestions "Small talk"
 
+        About ->
+            viewAbout
+
 
 viewSelectionButtons =
     Html.div
@@ -145,6 +163,11 @@ viewSelectionButtons =
             , Html.Events.onClick SelectedCloseness
             ]
             [ Html.text "Closeness" ]
+        , Html.button
+            [ Html.Attributes.class "button"
+            , Html.Events.onClick SelectedAbout
+            ]
+            [ Html.text "About" ]
         ]
 
 
@@ -218,6 +241,25 @@ viewQuestionNumber q =
                         [ text ("question " ++ String.fromInt x) ]
                 )
         )
+
+
+viewAbout =
+    Html.div
+        [ Html.Attributes.class "about"
+        , Html.Events.onClick SelectedNone
+        ]
+        [ Html.p []
+            [ text "The questions in this app are from the paper \"The Experimental Generation of Interpersonal Closeness: A Procedure and Some Preliminary Findings\", "
+            , Html.a
+                [ Html.Attributes.href "https://doi.org/10.1177/0146167297234003" ]
+                [ text "doi:10.1177/0146167297234003" ]
+            , text "."
+            ]
+        , Html.p []
+            [ text "Touch/click on the question text to advance to the next question." ]
+        , Html.p []
+            [ text "Touch/click to return to menu." ]
+        ]
 
 
 

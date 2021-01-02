@@ -50,6 +50,8 @@ type Msg
     = SelectedCloseness
     | SelectedSmallTalk
     | NextQuestion
+    | SelectedQuestion String
+    | NoOp
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -63,6 +65,12 @@ update msg model =
 
         NextQuestion ->
             ( { model | question = nextQuestion model.question }, Cmd.none )
+
+        SelectedQuestion q ->
+            ( { model | question = selectQuestion model.question q }, Cmd.none )
+
+        NoOp ->
+            ( model, Cmd.none )
 
 
 nextQuestion question =
@@ -85,6 +93,18 @@ nextQuestion question =
                 Smalltalk 0
 
 
+selectQuestion currentQuestion q =
+    case currentQuestion of
+        None ->
+            None
+
+        Closeness _ ->
+            Closeness (String.toInt q |> Maybe.withDefault 0)
+
+        Smalltalk _ ->
+            Smalltalk (String.toInt q |> Maybe.withDefault 0)
+
+
 
 -- SUBSCRIPTIONS
 
@@ -105,10 +125,10 @@ view model =
             viewSelectionButtons
 
         Closeness q ->
-            viewQuestion q closenessQuestions
+            viewQuestion q closenessQuestions "Closeness"
 
         Smalltalk q ->
-            viewQuestion q smalltalkQuestions
+            viewQuestion q smalltalkQuestions "Small talk"
 
 
 viewSelectionButtons =
@@ -128,17 +148,76 @@ viewSelectionButtons =
         ]
 
 
-viewQuestion q questions =
+viewQuestion q questions qtype =
     Html.div []
         [ Html.div
             [ Html.Attributes.class "question-number" ]
-            [ "Question " ++ String.fromInt (q + 1) |> text ]
+            [ Html.datalist [ Html.Attributes.id "qtype" ]
+                [ Html.option [ Html.Attributes.value "Small talk" ] []
+                , Html.option [ Html.Attributes.value "Closeness" ] []
+                ]
+            , Html.datalist [ Html.Attributes.id "number" ]
+                (List.range
+                    1
+                    36
+                    |> List.map (\x -> Html.option [ Html.Attributes.value (String.fromInt x) ] [])
+                )
+            , viewQuestionType qtype
+            , Html.span [] [ text ", " ]
+            , viewQuestionNumber q
+            ]
         , Html.div
             [ Html.Attributes.class "question-text"
             , Html.Events.onClick NextQuestion
             ]
             [ text (Dict.get q questions |> Maybe.withDefault "") ]
         ]
+
+
+viewQuestionType qtype =
+    Html.select
+        [ Html.Events.onInput
+            (\x ->
+                case x of
+                    "Smalltalk" ->
+                        SelectedSmallTalk
+
+                    "Closeness" ->
+                        SelectedCloseness
+
+                    _ ->
+                        NoOp
+            )
+        ]
+        [ Html.option
+            [ Html.Attributes.value "Smalltalk"
+            , Html.Attributes.selected (qtype == "Small talk")
+            ]
+            [ text "Small talk" ]
+        , Html.option
+            [ Html.Attributes.value "Closeness"
+            , Html.Attributes.selected (qtype == "Closeness")
+            ]
+            [ text "Closeness" ]
+        ]
+
+
+viewQuestionNumber q =
+    Html.select
+        [ Html.Events.onInput SelectedQuestion
+        ]
+        (List.range
+            1
+            36
+            |> List.map
+                (\x ->
+                    Html.option
+                        [ Html.Attributes.value (String.fromInt (x - 1))
+                        , Html.Attributes.selected (q == (x - 1))
+                        ]
+                        [ text ("question " ++ String.fromInt x) ]
+                )
+        )
 
 
 

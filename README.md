@@ -8,7 +8,7 @@ and makes them available in a handy web app. Ideally this will be available offl
 ## Build
 
 ```
-elm make --output=public/questions.js src/Main.elm
+scripts/optimize.sh
 ```
 
 ## Dev Server

@@ -277,7 +277,7 @@ smalltalkQuestions =
             , "How did you celebrate last Halloween?"
             , "Do you read a newspaper often and which do you prefer? Why?"
             , "What is a good number of people to have in a student household and why?"
-            , "If you could invent a new flavor ofice cream, what would it be?"
+            , "If you could invent a new flavor of ice cream, what would it be?"
             , "What is the best restaurant you've been to in the last month that your partner hasn't been to? Tell your partner about it."
             , "Describe the last pet you owned."
             , "What is your favorite holiday? Why?"
@@ -328,7 +328,7 @@ closenessQuestions =
             , "For what in your life do you feel most grateful?"
             , "If you could change anything about the way you were raised, what would it be?"
             , "Take 4 minutes and tell your partner your life story in as much detail as possible."
-            , "If you could wake up tomorrow having gained anyone quality or ability, what would it be?"
+            , "If you could wake up tomorrow having gained any one quality or ability, what would it be?"
             , -- Set 2
               "If a crystal ball could tell you the truth about yourself, your life, the future, or anything else, what would you want to know?"
             , "Is there something that you've dreamed of doing for a long time? Why haven't you done it?"
